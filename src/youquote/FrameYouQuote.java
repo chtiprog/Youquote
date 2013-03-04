@@ -37,7 +37,7 @@ public class FrameYouQuote extends javax.swing.JFrame {
         panPrincipal = new javax.swing.JPanel();
         panOHLCV = new javax.swing.JPanel();
         lblOpenQuote = new javax.swing.JLabel();
-        lblClose = new javax.swing.JLabel();
+        lblHigh = new javax.swing.JLabel();
         lblLow = new javax.swing.JLabel();
         lblCloseQuote = new javax.swing.JLabel();
         lblVariation = new javax.swing.JLabel();
@@ -59,9 +59,9 @@ public class FrameYouQuote extends javax.swing.JFrame {
         lblOpenQuote.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Open", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, new java.awt.Color(0, 0, 0)));
         lblOpenQuote.setPreferredSize(new java.awt.Dimension(30, 30));
 
-        lblClose.setText("...");
-        lblClose.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "High", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, new java.awt.Color(0, 0, 0)));
-        lblClose.setPreferredSize(new java.awt.Dimension(30, 30));
+        lblHigh.setText("...");
+        lblHigh.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "High", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, new java.awt.Color(0, 0, 0)));
+        lblHigh.setPreferredSize(new java.awt.Dimension(30, 30));
 
         lblLow.setText("...");
         lblLow.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Low", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, new java.awt.Color(0, 0, 0)));
@@ -86,7 +86,7 @@ public class FrameYouQuote extends javax.swing.JFrame {
                     .addComponent(lblLow, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panOHLCVLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(lblOpenQuote, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
-                        .addComponent(lblClose, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(lblHigh, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(lblCloseQuote, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(65, 65, 65))
         );
@@ -96,7 +96,7 @@ public class FrameYouQuote extends javax.swing.JFrame {
                 .addGap(38, 38, 38)
                 .addComponent(lblOpenQuote, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lblClose, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblHigh, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lblLow, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -213,14 +213,13 @@ public class FrameYouQuote extends javax.swing.JFrame {
         
         System.out.println(quoteName + "url : " + url) ; // DEBUG
         
+        // Récupère et sauvegarde fichier csv de yahoo
         try {
             URL website = new URL(url);
 
           ReadableByteChannel rbc = Channels.newChannel(website.openStream());
           FileOutputStream fos = new FileOutputStream("/home/ankat/testTelechargement.csv");
-          fos.getChannel().transferFrom(rbc, 0, 1 << 24);
-              
-             
+          fos.getChannel().transferFrom(rbc, 0, 1 << 24);     
         } 
         catch (MalformedURLException ex) {
             Logger.getLogger(FrameYouQuote.class.getName()).log(Level.SEVERE, null, ex);
@@ -229,11 +228,19 @@ public class FrameYouQuote extends javax.swing.JFrame {
             Logger.getLogger(FrameYouQuote.class.getName()).log(Level.SEVERE, null, ex);
         } 
         
+        // Parse le fichier csv
         try {
             CSVFile.parseCSV();      
         } catch (Exception ex) {
             Logger.getLogger(FrameYouQuote.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        // Mise à jour des labels avec les données parsées
+        lblCloseQuote.setText(CSVFile.data[0].toString()) ;
+        lblHigh.setText(CSVFile.data[1].toString());
+        lblLow.setText(CSVFile.data[2].toString());
+        lblOpenQuote.setText(CSVFile.data[3].toString());
+        lblVariation.setText((CSVFile.variation(CSVFile.data[3], CSVFile.data[0])).toString());
         
         /*
                   try {
@@ -292,8 +299,8 @@ public class FrameYouQuote extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buttonRecherche;
     private javax.swing.JComboBox comboNoms;
-    private javax.swing.JLabel lblClose;
     private javax.swing.JLabel lblCloseQuote;
+    private javax.swing.JLabel lblHigh;
     private javax.swing.JLabel lblLow;
     private javax.swing.JLabel lblOpenQuote;
     private javax.swing.JLabel lblPhoto;
