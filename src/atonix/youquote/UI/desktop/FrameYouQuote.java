@@ -1,5 +1,8 @@
-package youquote;
+package atonix.youquote.UI.desktop;
 
+import atonix.youquote.BusinessLogic.Telecharger;
+import atonix.youquote.BusinessLogic.CSVFile;
+import atonix.youquote.BusinessLogic.RecupFichiers;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -14,11 +17,6 @@ import java.util.logging.Logger;
  * @author ankat
  */
 public class FrameYouQuote extends javax.swing.JFrame { 
-    
-    String quoteName = "GOOG";
-    String url ;
- //   String url = "http://finance.yahoo.com/d/quotes.csv?s=GOOG&f=ohgl1" ;
-    Telecharger fichier;
     
     /**
      * Creates new form FrameYouQuote
@@ -49,7 +47,6 @@ public class FrameYouQuote extends javax.swing.JFrame {
         panRatios = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(700, 500));
 
         panPrincipal.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -208,25 +205,8 @@ public class FrameYouQuote extends javax.swing.JFrame {
 
     private void buttonRechercheActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRechercheActionPerformed
         
-        this.quoteName = textQuote.getText() ;
-        this.url = "http://finance.yahoo.com/d/quotes.csv?s=" + quoteName + "&f=ohgl1";
-        
-        System.out.println(quoteName + "url : " + url) ; // DEBUG
-        
-        // Récupère et sauvegarde fichier csv de yahoo
-        try {
-            URL website = new URL(url);
-
-          ReadableByteChannel rbc = Channels.newChannel(website.openStream());
-          FileOutputStream fos = new FileOutputStream("/home/ankat/testTelechargement.csv");
-          fos.getChannel().transferFrom(rbc, 0, 1 << 24);     
-        } 
-        catch (MalformedURLException ex) {
-            Logger.getLogger(FrameYouQuote.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (IOException ex) {
-            Logger.getLogger(FrameYouQuote.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        // Récupère le fichier Yahoo
+        RecupFichiers.recupFichierYahoo(textQuote.getText());
         
         // Parse le fichier csv
         try {
@@ -236,11 +216,11 @@ public class FrameYouQuote extends javax.swing.JFrame {
         }
         
         // Mise à jour des labels avec les données parsées
-        lblCloseQuote.setText(CSVFile.data[0].toString()) ;
+        lblOpenQuote.setText(CSVFile.data[0].toString()) ;
         lblHigh.setText(CSVFile.data[1].toString());
         lblLow.setText(CSVFile.data[2].toString());
-        lblOpenQuote.setText(CSVFile.data[3].toString());
-        lblVariation.setText((CSVFile.variation(CSVFile.data[3], CSVFile.data[0])).toString());
+        lblCloseQuote.setText(CSVFile.data[3].toString());
+        lblVariation.setText((CSVFile.variation(CSVFile.data[0], CSVFile.data[3])).toString());
         
         /*
                   try {

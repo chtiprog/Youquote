@@ -1,0 +1,3 @@
+Pour récupérer un fichier csv pour une action google par exemple, symbole GOOG
+http://finance.yahoo.com/d/quotes.csv?s=GOOG&f=ohgl1
+où o = open, h = high, g = low, l1 = close
